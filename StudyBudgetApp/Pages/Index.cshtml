@@ -1,0 +1,184 @@
+﻿@page
+@model StudyBudgetApp.Pages.IndexModel
+@{
+    ViewData["Title"] = "Study Budget Calculator";
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <h1>Study Budget Calculator</h1>
+        <p class="lead">
+            Plan your monthly student expenses and check your remaining budget.
+        </p>
+        <p class="text-muted">
+            Enter all amounts in Malaysian Ringgit (RM).
+            Enter 0 for expenses that do not apply.
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Monthly budget and expenses</h2>
+
+                    <form method="post" id="budget-form">
+                        <div asp-validation-summary="All"
+                             class="text-danger"
+                             role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.MonthlyBudget"
+                                   class="form-label"></label>
+                            <input asp-for="Input.MonthlyBudget"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="100000"
+                                   step="0.01"
+                                   required />
+                            <span asp-validation-for="Input.MonthlyBudget"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Rent"
+                                   class="form-label"></label>
+                            <input asp-for="Input.Rent"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="100000"
+                                   step="0.01"
+                                   required />
+                            <span asp-validation-for="Input.Rent"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Food"
+                                   class="form-label"></label>
+                            <input asp-for="Input.Food"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="100000"
+                                   step="0.01"
+                                   required />
+                            <span asp-validation-for="Input.Food"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Transport"
+                                   class="form-label"></label>
+                            <input asp-for="Input.Transport"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="100000"
+                                   step="0.01"
+                                   required />
+                            <span asp-validation-for="Input.Transport"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.StudyCosts"
+                                   class="form-label"></label>
+                            <input asp-for="Input.StudyCosts"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="100000"
+                                   step="0.01"
+                                   required />
+                            <span asp-validation-for="Input.StudyCosts"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Calculate budget
+                        </button>
+
+                        <a asp-page="/Index" class="btn btn-outline-secondary">
+                            Clear
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            @if (Model.HasResult)
+            {
+                var resultStyle = Model.RemainingBudget < 0
+                    ? "alert-danger"
+                    : Model.RemainingBudget == 0
+                        ? "alert-warning"
+                        : "alert-success";
+
+                <div id="budget-result"
+                     class="alert @resultStyle"
+                     role="status">
+                    <h2 class="h4">@Model.BudgetStatus</h2>
+
+                    <dl class="row mb-0">
+                        <dt class="col-7">Monthly budget</dt>
+                        <dd class="col-5">
+                            RM @Model.Input.MonthlyBudget.GetValueOrDefault().ToString("N2")
+                        </dd>
+
+                        <dt class="col-7">Total expenses</dt>
+                        <dd class="col-5">
+                            RM @Model.TotalExpenses.ToString("N2")
+                        </dd>
+
+                        @if (Model.RemainingBudget < 0)
+                        {
+                            <dt class="col-7">Amount over budget</dt>
+                            <dd class="col-5">
+                                RM @Math.Abs(Model.RemainingBudget).ToString("N2")
+                            </dd>
+                        }
+                        else
+                        {
+                            <dt class="col-7">Remaining budget</dt>
+                            <dd class="col-5">
+                                RM @Model.RemainingBudget.ToString("N2")
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            }
+            else
+            {
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h2 class="h4">Your budget summary</h2>
+                        <p class="mb-0">
+                            Complete the form and select Calculate budget
+                            to see your results.
+                        </p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const budgetForm = document.getElementById("budget-form");
+        const budgetResult = document.getElementById("budget-result");
+
+        // Hide the previous calculation when the user changes an input.
+        budgetForm.addEventListener("input", function () {
+            if (budgetResult) {
+                budgetResult.hidden = true;
+            }
+        });
+    </script>
+}

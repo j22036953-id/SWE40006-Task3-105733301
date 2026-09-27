@@ -1,0 +1,19 @@
+# Generated build files
+**/bin/
+**/obj/
+**/publish/
+
+# Local editor settings
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Deployment profiles and credentials
+**/PublishProfiles/
+*.pubxml
+*.pubxml.user
+*.PublishSettings
+*.publishsettings
+.env
+.env.*
