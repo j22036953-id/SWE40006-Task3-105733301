@@ -1,0 +1,392 @@
+﻿@page
+@model RentalMaintenanceApp.Pages.IndexModel
+@using RentalMaintenanceApp.Models
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Maintenance overview | RentalCare</title>
+    <link rel="stylesheet" href="~/css/maintenance.css"
+          asp-append-version="true" />
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" asp-page="/Index" aria-label="RentalCare home">
+            <span class="brand-mark" aria-hidden="true">R</span>
+            <span>Rental<span class="brand-accent">Care</span></span>
+        </a>
+
+        <div class="workspace">
+            <span class="workspace-icon" aria-hidden="true">⌂</span>
+            <div>
+                <strong>Rental workspace</strong>
+                <span>Property maintenance</span>
+            </div>
+        </div>
+
+        <p class="nav-label">WORKSPACE</p>
+
+        <nav aria-label="Main navigation">
+            <a class="nav-item active" asp-page="/Index"
+               aria-current="page">
+                <span aria-hidden="true">▦</span>
+                Overview
+            </a>
+            <a class="nav-item" href="#requests">
+                <span aria-hidden="true">☷</span>
+                Maintenance requests
+            </a>
+            <a class="nav-item" href="#create-request"
+               data-open-request>
+                <span aria-hidden="true">＋</span>
+                Report an issue
+            </a>
+        </nav>
+
+        <div class="sidebar-note">
+            <span class="small-label">A LITTLE CARE GOES A LONG WAY</span>
+            <p>Keep every repair moving, from the first report to resolution.</p>
+        </div>
+
+        <div class="workspace-footer">
+            <span class="avatar" aria-hidden="true">D</span>
+            <div>
+                <strong>Demonstration workspace</strong>
+                <span>Use sample information only</span>
+            </div>
+        </div>
+    </aside>
+
+    <main id="main-content" class="main">
+        <header class="topbar">
+            <span>Workspace <span class="breadcrumb-divider">/</span>
+                <strong>Overview</strong>
+            </span>
+            <span class="demo-badge">Single-property demo</span>
+        </header>
+
+        <div class="content">
+            <section class="page-heading" aria-labelledby="page-title">
+                <div>
+                    <p class="eyebrow">PROPERTY CARE, MADE CLEAR</p>
+                    <h1 id="page-title">Maintenance overview</h1>
+                    <p class="muted">
+                        Manage repairs, track progress, and keep your property in good shape.
+                    </p>
+                </div>
+                <button class="button primary" type="button"
+                        data-open-request>
+                    <span aria-hidden="true">＋</span> Report an issue
+                </button>
+            </section>
+
+            @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+            {
+                <div class="notice success" role="status">
+                    @Model.SuccessMessage
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="notice error" role="alert">
+                    @Model.ErrorMessage
+                </div>
+            }
+
+            <section class="stats" aria-label="Maintenance totals">
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Total requests</span>
+                        <span class="stat-symbol neutral" aria-hidden="true">▤</span>
+                    </div>
+                    <strong class="stat-number">@Model.TotalCount</strong>
+                    <span class="stat-caption">All recorded maintenance</span>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Reported</span>
+                        <span class="stat-symbol amber" aria-hidden="true">!</span>
+                    </div>
+                    <strong class="stat-number">@Model.ReportedCount</strong>
+                    <span class="stat-caption">Awaiting action</span>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>In progress</span>
+                        <span class="stat-symbol blue" aria-hidden="true">↗</span>
+                    </div>
+                    <strong class="stat-number">@Model.InProgressCount</strong>
+                    <span class="stat-caption">Work is underway</span>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span>Resolved</span>
+                        <span class="stat-symbol teal" aria-hidden="true">✓</span>
+                    </div>
+                    <strong class="stat-number">@Model.ResolvedCount</strong>
+                    <span class="stat-caption">Closed with care</span>
+                </article>
+            </section>
+
+            <details id="create-request" class="panel create-panel"
+                     open="@(Model.ShowCreateForm ? "open" : null)">
+                <summary>
+                    <span>
+                        <strong>Report a maintenance issue</strong>
+                        <span class="summary-description">
+                            Tell us what needs attention.
+                        </span>
+                    </span>
+                    <span class="expand-icon" aria-hidden="true">＋</span>
+                </summary>
+
+                <div class="panel-body">
+                    <form method="post" asp-page-handler="Create">
+                        <div asp-validation-summary="All"
+                             class="validation-summary"
+                             role="alert"></div>
+
+                        <div class="form-grid">
+                            <div class="field">
+                                <label asp-for="Input.Title">Issue title</label>
+                                <input asp-for="Input.Title"
+                                       minlength="5" maxlength="100" required
+                                       placeholder="e.g. Kitchen tap is leaking"
+                                       aria-describedby="title-error" />
+                                <span asp-validation-for="Input.Title"
+                                      id="title-error" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <label asp-for="Input.Location">Room or location</label>
+                                <input asp-for="Input.Location"
+                                       maxlength="60" required
+                                       placeholder="e.g. Unit 2 · Kitchen"
+                                       aria-describedby="location-error" />
+                                <span asp-validation-for="Input.Location"
+                                      id="location-error" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <label asp-for="Input.Category">Category</label>
+                                <select asp-for="Input.Category"
+                                        asp-items="Html.GetEnumSelectList<RequestCategory>()"
+                                        aria-describedby="category-error"></select>
+                                <span asp-validation-for="Input.Category"
+                                      id="category-error" class="field-error"></span>
+                            </div>
+
+                            <div class="field">
+                                <label asp-for="Input.Priority">Priority</label>
+                                <select asp-for="Input.Priority"
+                                        asp-items="Html.GetEnumSelectList<RequestPriority>()"
+                                        aria-describedby="priority-help priority-error">
+                                </select>
+                                <small id="priority-help" class="muted">
+                                    High: urgent attention · Medium: routine repair · Low: minor issue
+                                </small>
+                                <span asp-validation-for="Input.Priority"
+                                      id="priority-error" class="field-error"></span>
+                            </div>
+
+                            <div class="field full-width">
+                                <label asp-for="Input.Description">Description</label>
+                                <textarea asp-for="Input.Description"
+                                          rows="4" minlength="10"
+                                          maxlength="2000" required
+                                          placeholder="Describe the problem, when it started, and any useful details."
+                                          aria-describedby="description-error"></textarea>
+                                <span asp-validation-for="Input.Description"
+                                      id="description-error" class="field-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <p class="muted">
+                                New requests start with the status <strong>Reported</strong>.
+                            </p>
+                            <button type="submit" class="button primary">
+                                Submit request <span aria-hidden="true">↗</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </details>
+
+            <section id="requests" class="panel"
+                     aria-labelledby="requests-heading">
+                <div class="panel-heading">
+                    <div>
+                        <h2 id="requests-heading">Maintenance requests</h2>
+                        <p class="muted">Track the details. Keep the work moving.</p>
+                    </div>
+                    <span class="count-badge">@Model.OpenCount open</span>
+                </div>
+
+                <form method="get" class="filter-bar" role="search">
+                    <div class="field search-field">
+                        <label asp-for="Search">Search requests</label>
+                        <input asp-for="Search" type="search"
+                               placeholder="Search title, location or reference…" />
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="StatusFilter">Status</label>
+                        <select asp-for="StatusFilter">
+                            <option value="">All statuses</option>
+                            <option value="Reported">Reported</option>
+                            <option value="InProgress">In progress</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label asp-for="PriorityFilter">Priority</label>
+                        <select asp-for="PriorityFilter"
+                                asp-items="Html.GetEnumSelectList<RequestPriority>()">
+                            <option value="">All priorities</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="button secondary">Apply</button>
+                    <a asp-page="/Index" class="reset-link">Reset</a>
+                </form>
+
+                @if (Model.Requests.Count == 0)
+                {
+                    <div class="empty-state">
+                        <span class="empty-icon" aria-hidden="true">⌂</span>
+                        @if (Model.TotalCount == 0)
+                        {
+                            <h3>A well-kept home starts here.</h3>
+                            <p>Report your first issue to start tracking maintenance.</p>
+                            <button type="button" class="button primary"
+                                    data-open-request>
+                                Report your first issue
+                            </button>
+                        }
+                        else
+                        {
+                            <h3>No matching requests</h3>
+                            <p>Try a different search or clear your filters.</p>
+                            <a asp-page="/Index" class="button secondary">
+                                Clear filters
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="request-list">
+                        @foreach (var request in Model.Requests)
+                        {
+                            var statusClass = request.Status.ToString().ToLowerInvariant();
+                            var priorityClass = request.Priority.ToString().ToLowerInvariant();
+
+                            <article class="request-card">
+                                <div class="request-main">
+                                    <div class="request-meta">
+                                        <span class="reference">@request.Reference</span>
+                                        <span class="category">@request.Category</span>
+                                    </div>
+
+                                    <h3>@request.Title</h3>
+                                    <p class="location">@request.Location</p>
+
+                                    <div class="request-tags">
+                                        <span class="status-badge @statusClass">
+                                            <span class="status-dot" aria-hidden="true"></span>
+                                            @request.StatusLabel
+                                        </span>
+                                        <span class="priority-badge @priorityClass">
+                                            @request.Priority priority
+                                        </span>
+                                    </div>
+
+                                    <details class="request-details">
+                                        <summary>View description</summary>
+                                        <p>@request.Description</p>
+                                        <span class="muted">
+                                            Last updated:
+                                            @request.UpdatedAt.ToString("dd MMM yyyy, HH:mm") UTC
+                                        </span>
+                                    </details>
+                                </div>
+
+                                <div class="request-actions">
+                                    <span class="request-date">
+                                        Reported @request.CreatedAt.ToString("dd MMM yyyy")
+                                    </span>
+
+                                    <form method="post" asp-page-handler="UpdateStatus"
+                                          class="status-form">
+                                        <input type="hidden" name="id" value="@request.Id" />
+                                        <label for="status-@request.Id">Update status</label>
+                                        <div class="status-controls">
+                                            <select id="status-@request.Id" name="newStatus">
+                                                <option value="Reported"
+                                                        selected="@(request.Status == RequestStatus.Reported)">
+                                                    Reported
+                                                </option>
+                                                <option value="InProgress"
+                                                        selected="@(request.Status == RequestStatus.InProgress)">
+                                                    In progress
+                                                </option>
+                                                <option value="Resolved"
+                                                        selected="@(request.Status == RequestStatus.Resolved)">
+                                                    Resolved
+                                                </option>
+                                            </select>
+                                            <button type="submit" class="button secondary"
+                                                    aria-label="Save status for @request.Reference">
+                                                Save
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </article>
+                        }
+                    </div>
+
+                    <div class="list-footer">
+                        Showing @Model.Requests.Count of @Model.TotalCount requests
+                        <span>Newest first</span>
+                    </div>
+                }
+            </section>
+
+            <footer class="page-footer">
+                <span>RentalCare · Rental Maintenance Tracker</span>
+                <span>C# edition · SWE40006</span>
+            </footer>
+        </div>
+    </main>
+</div>
+
+<script>
+    const createPanel = document.getElementById('create-request');
+
+    document.querySelectorAll('[data-open-request]').forEach(trigger => {
+        trigger.addEventListener('click', event => {
+            event.preventDefault();
+            createPanel.open = true;
+            createPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            createPanel.querySelector('input:not([type="hidden"])')
+                ?.focus({ preventScroll: true });
+        });
+    });
+</script>
+</body>
+</html>

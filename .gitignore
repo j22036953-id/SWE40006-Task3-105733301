@@ -17,3 +17,16 @@
 *.publishsettings
 .env
 .env.*
+
+# RentalCare build output and local settings
+**/bin/
+**/obj/
+**/publish/
+**/.vscode/
+*.code-workspace
+
+# Runtime databases
+**/App_Data/
+**/RentalMaintenancePHP_Data/
+*.db
+*.db-*
